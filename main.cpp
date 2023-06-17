@@ -10,30 +10,22 @@
 int windowWidth = 854;
 int windowHeight = 480;
 int points = 0;
+double delta = 0.0;
 Uint64 start = 0;
 Uint64 end = 0;
-double delta = 0.0f;
 std::string title = "Asteroids!";
 SDL_Window* window;
 SDL_Renderer* renderer;
 
 
-SDL_Texture* loadTexture(const char* filePath) {
-	SDL_Texture* texture = nullptr;
-	texture = IMG_LoadTexture(renderer, filePath);
-	if (texture == NULL) { std::cout << "Fail to load texture: " << filePath << " SDL ERROR: " << SDL_GetError() << std::endl; }
-	return texture;
-}
+
 //Classes
 struct Vector2 {
 	float x = 0.0f, y = 0.0f;
 };
 
-
-
 class Entity {
 private:
-	std::string texturePath;
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	float angle;
@@ -49,18 +41,13 @@ public:
 		}
 	}
 
-	void setTexture(/*SDL_Renderer* _renderer,*/ const std::string& path) {
-		texturePath = path;
+	void setTexture(const std::string& texturePath) {
 		SDL_Surface* surface = IMG_Load(texturePath.c_str());
-		if (!surface) {
-			// Handle error
-			std::cout << "Fail to load surface from image: " << path << " SDL ERROR: " << SDL_GetError() << std::endl;
-		}
+		if (!surface) {std::cout << "Fail to load surface from image: " << texturePath << " SDL ERROR: " << SDL_GetError() << std::endl;}
 		else {
 			texture = SDL_CreateTextureFromSurface(renderer, surface);
 			if (!texture) {
-				// Handle error
-				std::cout << "Fail to create texture: " << path << " SDL ERROR: " << SDL_GetError() << std::endl;
+				std::cout << "Fail to create texture: " << texturePath << " SDL ERROR: " << SDL_GetError() << std::endl;
 			}
 			rect.w = surface->w;
 			rect.h = surface->h;
@@ -163,7 +150,6 @@ public:
 	void process() {
 		moveToAngle(getVelocity());
 		allowWarp();
-		// Collision check is in another place!!!
 	}
 };
 
@@ -175,7 +161,6 @@ public:
 		setAngle(_angle);
 	}
 	void process() {
-		//applyInertia();
 		moveToAngle(5.0f);
 	}
 };
@@ -193,15 +178,15 @@ public:
 	void process() {
 		applyInertia();
 		allowWarp();
-		// check collision
 	}
 
 };
-//aqui as instancias de player e asteroids
+//As coisas são feitas aqui
 Player player = Player();
 std::vector<std::shared_ptr<Asteroid>> asteroids;
 std::vector<std::shared_ptr<Bullet>> bullets;
 
+//TODO deixe isso aqui menos porco:
 void initPlayerAndAsteroid() {
 	for (int i = 0; i < 5;i++){
 		asteroids.push_back(std::make_shared<Asteroid>());
@@ -216,8 +201,8 @@ void initPlayerAndAsteroid() {
 		asteroid->setAngle(randAngle);
 		asteroid->setVelocity(2.0f);
 	}
-	player.setTexture("img/player.png");
-	player.changeRectSize({0.5f,0.5f});
+	player.setTexture("img/player.png"); //bote isso dentro do player
+	player.changeRectSize({0.5f,0.5f}); //smol pureia
 
 }
 
@@ -249,9 +234,6 @@ void toggleFullScreen() {
 	}
 }
 
-void print(const char* text) {
-	std::cout << text << std::endl;
-}
 void clean() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
@@ -274,8 +256,7 @@ void logic() {
 			SDL_Rect asteRect = asteroid->getRect();
 			const SDL_Rect* asteRectPTR = &asteRect;
 			if (SDL_HasIntersection(asteRectPTR, plRectPTR)) {
-				//reset game
-				//SDL_Delay(50); //3frames?
+				//Todo reset game
 				break;
 			}
 			// Não gosto como tem esse loop dentro do outro, não parece eficiente
@@ -301,6 +282,7 @@ void logic() {
 	}
 	
 	}
+	//Deletores 
 	bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
 		[&](const std::shared_ptr<Bullet>& bullet) {
 			return bullet->getPosition().x > windowWidth || bullet->getPosition().y > windowHeight || bullet->getPosition().x < 0 || bullet->getPosition().y < 0;
@@ -311,15 +293,11 @@ void logic() {
 			return asteroid->ded;
 		}),
 		asteroids.end());
-	//todo Programe a colisão aqui, o metodo de exlusão está acima e checagem de colisão em SDL2 é SDL_HasIntersection(const SDL_Rect * A, const SDL_Rect * B);
-	//Colisão da bala com um asteroid:
-
 }
 
 void playerInput() {
-
+	//FOR THE LOVE OF GOD MAKE THIS FEEL BETTER
 	SDL_Event event;
-	//SDL_PollEvent(&event);
 	
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT) {
@@ -384,14 +362,11 @@ void mainloop() {
 		playerInput();
 		logic();
 		//checkCollision();
-		renderStuff(asteroids, player, bullets); //Tenho que re implementar como atirar
+		renderStuff(asteroids, player, bullets);
 
 
 		end = SDL_GetPerformanceCounter();
 		delta = (end - start) / (float)SDL_GetPerformanceFrequency();
-
-		//debug
-		//std::cout << player.getAllInfo() << " Numero de Asteroides: " << asteroids.size() << "\n";
 
 		title = "Asteroids! FPS: " + std::to_string((int)(1.0f / delta));
 		SDL_SetWindowTitle(window, title.c_str());
@@ -416,6 +391,8 @@ int run() {
 	if ((IMGinitted & IMGflags) != IMGflags) {
 		std::cout << "Fail to init PNG and JPG support: " << SDL_GetError() << std::endl; return 1;
 	}
+
+	//:D
 	initPlayerAndAsteroid();
 	mainloop();
 	return 0;
