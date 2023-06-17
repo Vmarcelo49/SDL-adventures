@@ -1,0 +1,74 @@
+
+.vs/SDL adventures/FileContentIndex/022f9147-b0c4-4e71-b33e-511abacee078.vsidx
+.vs/SDL adventures/FileContentIndex/643ce7e2-5b5a-4a59-a690-37248b8da84d.vsidx
+.vs/SDL adventures/FileContentIndex/a4a04b67-ed75-480f-a7a7-d9acd4922037.vsidx
+.vs/SDL adventures/FileContentIndex/c8008419-7c54-4ce1-8952-4664647eeeb0.vsidx
+.vs/SDL adventures/FileContentIndex/read.lock
+.vs/SDL adventures/v17/.suo
+.vs/SDL adventures/v17/Browse.VC.db
+.vs/SDL adventures/v17/ipch/AutoPCH/10de8d874c415342/GAME.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/16e9251cf2ca67a1/HEADER.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/1cf9f71b7091fcfc/ENTITY.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/2529549ff7ee3af2/TESTE.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/2a7bc66dd316424/GAME.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/3c0077142c71f2b/ENTITY.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/4c0ad8ca4902d04c/GAME.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/4c28f5b205e48b56/MAIN.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/4f346a87700bb7ef/GAME.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/53687a717060de0e/ENTITY.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/598539a485687838/SOCORRO_MAIN.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/778d686368710408/MAIN.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/7c8259b0b9e21a37/DESESPERO_MAIN.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/7cdcd757a59c4388/ENTITY.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/7e62001ba857e7f5/ENTITY.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/90e649a8b2ccbca9/MESALVA.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/aae6e1ca7e9f3605/GAME.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/d3292e072d70fb2f/MAIN.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/efc9a5ea94aa1d69/TEST.ipch
+.vs/SDL adventures/v17/ipch/AutoPCH/fdd530b38bd5af8b/GAME.ipch
+SDL adventures.sln
+SDL adventures.vcxproj
+SDL adventures.vcxproj.filters
+SDL adventures.vcxproj.user
+x64/Debug/CodeAnalysisResultManifest.txt
+x64/Debug/entity.nativecodeanalysis.sarif
+x64/Debug/game.nativecodeanalysis.sarif
+x64/Debug/main.nativecodeanalysis.sarif
+x64/Debug/SDL adventures.Build.CppClean.log
+x64/Debug/SDL adventures.exe.recipe
+x64/Debug/SDL adventures.log
+x64/Debug/SDL adventures.tlog/CL.command.1.tlog
+x64/Debug/SDL adventures.tlog/SDL adventures.lastbuildstate
+x64/Debug/SDL adventures.tlog/unsuccessfulbuild
+x64/Debug/SDL adventures.vcxproj.FileListAbsolute.txt
+x64/Debug/SDL2.dll
+x64/Debug/SDL2_image.dll
+x64/Debug/vc143.idb
+x64/Debug/vc143.pdb
+x64/Release/CodeAnalysisResultManifest.txt
+x64/Release/img/asteroid.png
+x64/Release/img/bullet.png
+x64/Release/img/moon.png
+x64/Release/img/player.png
+x64/Release/main.nativecodeanalysis.sarif
+x64/Release/main.obj
+x64/Release/SDL adventures.Build.CppClean.log
+x64/Release/SDL adventures.exe
+x64/Release/SDL adventures.exe.recipe
+x64/Release/SDL adventures.iobj
+x64/Release/SDL adventures.ipdb
+x64/Release/SDL adventures.log
+x64/Release/SDL adventures.pdb
+x64/Release/SDL adventures.tlog/CL.command.1.tlog
+x64/Release/SDL adventures.tlog/Cl.items.tlog
+x64/Release/SDL adventures.tlog/CL.read.1.tlog
+x64/Release/SDL adventures.tlog/CL.write.1.tlog
+x64/Release/SDL adventures.tlog/link.command.1.tlog
+x64/Release/SDL adventures.tlog/link.read.1.tlog
+x64/Release/SDL adventures.tlog/link.write.1.tlog
+x64/Release/SDL adventures.tlog/link.write.2u.tlog
+x64/Release/SDL adventures.tlog/SDL adventures.lastbuildstate
+x64/Release/SDL adventures.vcxproj.FileListAbsolute.txt
+x64/Release/SDL2.dll
+x64/Release/SDL2_image.dll
+x64/Release/vc143.pdb
