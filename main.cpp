@@ -33,7 +33,6 @@ struct Vector2 {
 
 class Entity {
 private:
-	std::string name;
 	std::string texturePath;
 	SDL_Texture* texture;
 	SDL_Rect rect;
@@ -70,13 +69,6 @@ public:
 	}
 	SDL_Rect getRect() {
 		return rect;
-	}
-	void setName(const std::string& _name) {
-		name = _name;
-	}
-
-	std::string getName() const {
-		return name;
 	}
 
 	void setPosition(const Vector2& position) {
@@ -166,8 +158,6 @@ public:
 class Player : public Entity {
 public:
 	Player() {
-		setName("player");
-		//setTexture("img/player.png");
 		setPosition({static_cast<float>(windowWidth) / 2, static_cast<float>(windowHeight) / 2 });
 	}
 	void process() {
@@ -180,7 +170,6 @@ public:
 class Bullet : public Entity {
 public:
 	Bullet(SDL_Rect _rect , float _angle) {
-		setName("Bullet");
 		setTexture("img/bullet.png");
 		setPosition({ static_cast<float>(_rect.x + (_rect.w / 2)), static_cast<float>(_rect.y + (_rect.h/2)) });
 		setAngle(_angle);
@@ -194,7 +183,6 @@ public:
 class Asteroid : public Entity {
 public:
 	Asteroid() {
-		setName("Asteroid");
 		setTexture("img/asteroid.png");
 		srand(time(NULL));
 		setPosition({-500.0f, -500.0f });
