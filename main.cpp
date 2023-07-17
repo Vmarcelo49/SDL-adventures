@@ -1,23 +1,28 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 
-//Vars iniciais
-int windowWidth = 854;
-int windowHeight = 480;
+#include <crtdbg.h>
+
+int windowWidth = 1280;
+int windowHeight = 720;
 int points = 0;
 double delta = 0.0;
 Uint64 start = 0;
 Uint64 end = 0;
-std::string title = "Asteroids!";
 SDL_Window* window;
 SDL_Renderer* renderer;
-
-
+int fontSize = 22;
+int textX, textY = 1;
+SDL_Color textoCor = { 255, 255, 255 }; //Branco
+std::string textoStr = "Points: 0";
+std::string title = "Asteroids!";
 
 //Classes
 struct Vector2 {
@@ -27,19 +32,20 @@ struct Vector2 {
 class Entity {
 private:
 	SDL_Texture* texture;
-	SDL_Rect rect;
 	float angle;
 	float velocity;
 
 public:
 	Entity() : texture(nullptr), angle(0.0f), velocity(0.0f) {
-		rect = { 0, 0, 0, 0 }; }
+		rect = { 0, 0, 0, 0 };
+	}
 	//todo arrume o behavior da movimentação da nave
 	~Entity() {
 		if (texture) {
 			SDL_DestroyTexture(texture);
 		}
 	}
+	SDL_Rect rect;
 
 	void setTexture(const std::string& texturePath) {
 		SDL_Surface* surface = IMG_Load(texturePath.c_str());
@@ -186,6 +192,11 @@ Player player = Player();
 std::vector<std::shared_ptr<Asteroid>> asteroids;
 std::vector<std::shared_ptr<Bullet>> bullets;
 
+
+void addPoint(int _pointNum) {
+	points += _pointNum;
+	textoStr = "Points: " + std::to_string(points);
+}
 //TODO deixe isso aqui menos porco:
 void initPlayerAndAsteroid() {
 	for (int i = 0; i < 5;i++){
@@ -193,7 +204,7 @@ void initPlayerAndAsteroid() {
 	}
 	int min = 0, max = windowWidth;
 	for (auto& asteroid : asteroids) {
-		asteroid->setTexture("img/asteroid.png");
+		//asteroid->setTexture("img/asteroid.png");
 		float aste_x = rand() % (max - min) + min; //random location longe do player se possivel ;-; // good luck lmao
 		float aste_y = rand() % windowHeight;
 		asteroid->setPosition({ aste_x, aste_y });
@@ -201,26 +212,11 @@ void initPlayerAndAsteroid() {
 		asteroid->setAngle(randAngle);
 		asteroid->setVelocity(2.0f);
 	}
-	player.setTexture("img/player.png"); //bote isso dentro do player
+	player.setTexture("img/player.png"); //bote isso dentro do player, n sei pq mas nao tem como, sempre dá erro de renderer invalido
 	player.changeRectSize({0.5f,0.5f}); //smol pureia
 
 }
 
-void changeWindowRes() {
-	static int mode;
-	if (mode == 0) {
-		SDL_SetWindowSize(window, 1280, 720);
-		mode = 1;
-	}
-	else if (mode == 1) {
-		SDL_SetWindowSize(window, 1920, 1080);
-		mode = 2;
-	}
-	else if (mode == 2) {
-		SDL_SetWindowSize(window, 854, 480);
-		mode = 0;
-	}
-}
 
 void toggleFullScreen() {
 	static bool isFullScreen = false;
@@ -237,14 +233,13 @@ void toggleFullScreen() {
 void clean() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	SDL_Quit();
 }
 
+
 void logic() {
 	player.process();
-	SDL_Rect playerRect = player.getRect();
-	const SDL_Rect* plRectPTR = &playerRect;
-
 	if (bullets.size() > 0) {
 		for (auto& bullet : bullets) {
 			bullet->process();
@@ -253,25 +248,16 @@ void logic() {
 	if (asteroids.size() > 0){
 		for (auto& asteroid : asteroids) {
 			asteroid->process();
-			SDL_Rect asteRect = asteroid->getRect();
-			const SDL_Rect* asteRectPTR = &asteRect;
-			if (SDL_HasIntersection(asteRectPTR, plRectPTR)) {
+			if (SDL_HasIntersection(&asteroid->rect, &player.rect)) {
 				//Todo reset game
 				break;
 			}
 			// Não gosto como tem esse loop dentro do outro, não parece eficiente
 			if (bullets.size() > 0) {
 				for (auto& bullet : bullets) {
-					
-					SDL_Rect bullRect = bullet->getRect();
-					const SDL_Rect* bullRectPTR = &bullRect;
 					//talvez melhor criar uma função para fazer isso TODO
-					if (SDL_HasIntersection(asteRectPTR, bullRectPTR)) {
-						//points += 10;
-						//bullet.reset();
-						//Bullet* bullet_ptr = new Bullet(player.getRect(), player.getAngle());
-						//delete bullet_ptr;
-						std::cout << "COLISAO" << std::endl;
+					if (SDL_HasIntersection(&asteroid->rect, &bullet->rect)) {
+						addPoint(10);
 						bullet->setPosition({ -5000.0f,-1000.0f });
 						asteroid->setPosition({ -1001.0f,-1001.0f });
 						asteroid->ded = true;
@@ -305,9 +291,6 @@ void playerInput() {
 			exit(0);
 		}
 		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.sym == SDLK_F10) {
-				changeWindowRes();
-			}
 			if (event.key.keysym.sym == SDLK_F11) {
 				toggleFullScreen();
 			}
@@ -338,11 +321,33 @@ void playerInput() {
 	}
 }
 
+void renderizarTexto(std::string _texto) {
+	//MEMORY LEAK AAAAAAAAAAAAAAAA
+	TTF_Font* font = TTF_OpenFont("font/Ubuntu-Regular.ttf", fontSize);//tire isso de dentro da func
+	const char* textoConv = _texto.c_str();
+	if (textoConv == nullptr) {
 
+		printf("Text is nullptr\n");
+		return;
+	}
+	SDL_Surface* surface = TTF_RenderText_Solid(font, textoConv, textoCor);
+	if (&surface == NULL) {
+		printf("Text Surface is NULL\n");
+		return;
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	if (&texture == NULL) {
+		printf("Text texture is NULL\n");
+		return;
+	}
+	SDL_Rect destRect = { textX, textY, surface->w, surface->h }; //erro aqui
+	SDL_RenderCopy(renderer, texture, NULL, &destRect);
+	SDL_FreeSurface(surface);
+	SDL_DestroyTexture(texture);
+}
 
-void renderStuff(std::vector<std::shared_ptr<Asteroid>> _asteroids, Player& _player, std::vector<std::shared_ptr<Bullet>> _bullets) {
+void renderStuff(std::vector<std::shared_ptr<Asteroid>> _asteroids, Player& _player, std::vector<std::shared_ptr<Bullet>> _bullets,std::string _pointsTxt) {
 	SDL_RenderClear(renderer); //Limpa o ultimo frame
-	
 	for (const auto& asteroid : _asteroids) {
 		asteroid->render(renderer);
 	}
@@ -350,6 +355,7 @@ void renderStuff(std::vector<std::shared_ptr<Asteroid>> _asteroids, Player& _pla
 		bullet->render(renderer);
 	}
 	_player.render(renderer);
+	renderizarTexto(_pointsTxt);
 	SDL_RenderPresent(renderer); // exibe tudo que esta no buffer do frame
 }
 
@@ -361,8 +367,7 @@ void mainloop() {
 
 		playerInput();
 		logic();
-		//checkCollision();
-		renderStuff(asteroids, player, bullets);
+		renderStuff(asteroids, player, bullets,textoStr);
 
 
 		end = SDL_GetPerformanceCounter();
@@ -374,16 +379,12 @@ void mainloop() {
 	}
 }
 
-
-int run() {
-	//SDL stuff
+int initSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl; return 1;
 	}
-
 	window = SDL_CreateWindow("SDL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
 	if (window == NULL) { std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl; return 1; }
-
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL) { std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl; return 1; }
 	int IMGflags = IMG_INIT_JPG | IMG_INIT_PNG;
@@ -391,8 +392,12 @@ int run() {
 	if ((IMGinitted & IMGflags) != IMGflags) {
 		std::cout << "Fail to init PNG and JPG support: " << SDL_GetError() << std::endl; return 1;
 	}
+	TTF_Init();
+	return 0;
+}
 
-	//:D
+int run() {
+	initSDL();
 	initPlayerAndAsteroid();
 	mainloop();
 	return 0;
@@ -400,5 +405,6 @@ int run() {
 
 int main(int argc, char** argv) {
 	run();
+	_CrtDumpMemoryLeaks();
 	return 0;
 }

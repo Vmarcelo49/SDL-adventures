@@ -78,3 +78,10 @@ x64/Release/vc143.pdb
 .vs/SDL adventures/FileContentIndex/b8d8466d-5f17-4415-a7d1-7a2a0415410e.vsidx
 .vs/SDL adventures/FileContentIndex/78100214-dbe2-4ee0-938b-a985a86ba929.vsidx
 *.vsidx
+font/desktop.ini
+*.obj
+*.exe
+*.ilk
+*.pdb
+*.tlog
+*.dll
